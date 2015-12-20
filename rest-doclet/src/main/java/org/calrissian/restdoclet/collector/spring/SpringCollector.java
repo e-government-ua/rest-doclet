@@ -26,6 +26,7 @@ import org.calrissian.restdoclet.model.RequestBody;
 import java.util.*;
 
 import static java.lang.Boolean.TRUE;
+import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.asList;
 import static org.calrissian.restdoclet.util.AnnotationUtils.getAnnotationName;
 import static org.calrissian.restdoclet.util.AnnotationUtils.getElementValue;
@@ -35,8 +36,10 @@ import static org.calrissian.restdoclet.util.TagUtils.*;
 
 public class SpringCollector extends AbstractCollector {
 
-    protected static final String CONTROLLER_ANNOTATION = Arrays.asList("org.springframework.stereotype.Controller",
-                                                                        "org.springframework.web.bind.annotation.RestController");
+    protected static final List<String> CONTROLLER_ANNOTATION = Collections.unmodifiableList(Arrays.asList(
+        "org.springframework.stereotype.Controller",
+        "org.springframework.web.bind.annotation.RestController"));
+
     protected static final String MAPPING_ANNOTATION = "org.springframework.web.bind.annotation.RequestMapping";
     protected static final String PATHVAR_ANNOTATION = "org.springframework.web.bind.annotation.PathVariable";
     protected static final String PARAM_ANNOTATION = "org.springframework.web.bind.annotation.RequestParam";

@@ -36,11 +36,6 @@ import static org.calrissian.restdoclet.Configuration.getOptionLength;
 
 public class RestDoclet extends Doclet {
 
-    private static final Collection<Collector> collectors = Arrays.<Collector>asList(
-            new SpringCollector(),
-            new JaxRSCollector()
-    );
-
     /**
      * Generate documentation here.
      * This method is required for all doclets.
@@ -48,23 +43,9 @@ public class RestDoclet extends Doclet {
      * @return true on success.
      */
     public static boolean start(RootDoc root) {
-
-        Configuration config = new Configuration(root.options());
-
-        Collection<ClassDescriptor> classDescriptors = new ArrayList<ClassDescriptor>();
-
-        for (Collector collector : collectors)
-            classDescriptors.addAll(collector.getDescriptors(root));
-
-        Writer writer;
-        if (config.getOutputFormat().equals(SwaggerWriter.OUTPUT_OPTION_NAME))
-            writer = new SwaggerWriter();
-        else
-            writer = new SimpleHtmlWriter();
-
-
         try {
-            writer.write(classDescriptors, config);
+            Writer writer = new SimpleHtmlWriter();
+            writer.write(new SpringCollector().getDescriptors(root), new Configuration(root.options()));
             return true;
         } catch (IOException e) {
             e.printStackTrace();

@@ -89,7 +89,9 @@ public class SwaggerWriter implements Writer {
         Map<String, Collection<Endpoint>> pathGroups = groupPaths(endpoints);
 
         File apiFile = new File("./" + API_DOC_DIR , resource);
-        apiFile.getParentFile().mkdirs();
+        if (!apiFile.getParentFile().mkdirs())
+            throw new IllegalArgumentException("Unable to build directory: " + apiFile.getParentFile());
+
 
         Collection<Api> apis = new ArrayList<Api>(pathGroups.size());
         for (Entry<String, Collection<Endpoint>> entry : pathGroups.entrySet())
@@ -233,22 +235,20 @@ public class SwaggerWriter implements Writer {
 
     private static void copySwagger() throws IOException {
         ZipInputStream swaggerZip = null;
-        FileOutputStream out = null;
-        try{
+        try {
             swaggerZip = new ZipInputStream(Thread.currentThread().getContextClassLoader().getResourceAsStream(SWAGGER_UI_ARTIFACT));
             ZipEntry entry;
             while ((entry = swaggerZip.getNextEntry()) != null) {
                 final File swaggerFile = new File(".", entry.getName());
                 if (entry.isDirectory()) {
-                    if (!swaggerFile.isDirectory() && !swaggerFile.mkdirs()) {
-                        throw new RuntimeException("Unable to create directory: " + swaggerFile);
-                    }
+                    if (!swaggerFile.isDirectory() && !swaggerFile.mkdirs())
+                        throw new IllegalArgumentException("Unable to create directory: " + swaggerFile);
                 } else {
                     copy(swaggerZip, new FileOutputStream(swaggerFile));
                 }
             }
         } finally {
-            close(swaggerZip, out);
+            close(swaggerZip);
         }
     }
 }

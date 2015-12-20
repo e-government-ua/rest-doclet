@@ -18,13 +18,12 @@ limitations under the License.
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.calrissian.restdoclet</groupId>
   <artifactId>rest-doclet-parent</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.2-igov</version>
   <packaging>pom</packaging>
   <name>Rest Doclet Parent</name>
   <description>A Javadoc Doclet that generates documentation on REST annotations in a project.</description>
   <modules>
     <module>rest-doclet</module>
-    <module>examples</module>
   </modules>
   <properties>
     <jackson.version>2.4.1.3</jackson.version>

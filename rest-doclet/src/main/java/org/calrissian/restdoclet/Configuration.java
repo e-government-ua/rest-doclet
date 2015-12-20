@@ -36,7 +36,7 @@ public class Configuration {
         private String option;
         private String defaultValue;
 
-        private ConfigOption(String option, String defaultValue) {
+        ConfigOption(String option, String defaultValue) {
             this.option = "-" + option;
             this.defaultValue = defaultValue;
         }

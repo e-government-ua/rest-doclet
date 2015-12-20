@@ -21,6 +21,7 @@ import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.ProgramElementDoc;
 import com.sun.javadoc.RootDoc;
 import org.calrissian.restdoclet.model.*;
+import org.calrissian.restdoclet.util.TagUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -146,7 +147,7 @@ public abstract class AbstractCollector implements Collector {
                                 consumes,
                                 produces,
                                 method.commentText(),
-                                firstSentence(method),
+                                method.commentText(),
                                 method.returnType()
                         )
                 );
