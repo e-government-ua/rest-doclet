@@ -45,7 +45,6 @@ public abstract class AbstractCollector implements Collector {
      * @param rootDoc
      * @return
      */
-    @Override
     public Collection<ClassDescriptor> getDescriptors(RootDoc rootDoc) {
         Collection<ClassDescriptor> classDescriptors = new ArrayList<ClassDescriptor>();
 

@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.calrissian.restdoclet;
 
+import com.sun.javadoc.RootDoc;
 import org.calrissian.restdoclet.writer.simple.SimpleHtmlWriter;
 
 import static java.lang.Boolean.parseBoolean;
@@ -51,6 +52,10 @@ public class Configuration {
     }
 
     private String[][] options;
+
+    public Configuration(RootDoc root) {
+        this(root.options());
+    }
 
     public Configuration(String[][] options) {
         this.options = options;

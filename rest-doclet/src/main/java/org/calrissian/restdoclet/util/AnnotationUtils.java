@@ -27,10 +27,9 @@ import static java.util.Collections.emptyList;
 public class AnnotationUtils {
 
     public static String getAnnotationName(AnnotationDesc annotation) {
-        try{
+        try {
             return annotation.annotationType().toString();
-        } catch (ClassCastException e)
-        {
+        } catch (ClassCastException e) {
             return null;
         }
     }
@@ -45,16 +44,15 @@ public class AnnotationUtils {
     }
 
     private static List<String> resolveAnnotationValue(AnnotationValue value) {
-        List<String> retVal = new ArrayList<String>();
+        List<String> retVal = new ArrayList<>();
         /**
          * TODO using recursion here is probably flawed.
          */
         if (value.value() instanceof AnnotationValue[])
-            for (AnnotationValue annotationValue : (AnnotationValue[])value.value())
+            for (AnnotationValue annotationValue : (AnnotationValue[]) value.value())
                 retVal.addAll(resolveAnnotationValue(annotationValue));
         else {
             retVal.add(value.value().toString());
-
         }
 
         return retVal;

@@ -17,6 +17,7 @@ package org.calrissian.restdoclet.writer;
 
 
 import org.calrissian.restdoclet.Configuration;
+import org.calrissian.restdoclet.collector.Collector;
 import org.calrissian.restdoclet.model.ClassDescriptor;
 
 import java.io.IOException;
@@ -24,6 +25,6 @@ import java.util.Collection;
 
 public interface Writer {
 
-    public void write(Collection<ClassDescriptor> classDescriptors, Configuration config) throws IOException;
+    public void write(Collector collector, Configuration config) throws IOException;
 
 }

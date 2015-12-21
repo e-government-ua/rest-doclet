@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.calrissian.restdoclet.util;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,27 +39,7 @@ public class CommonUtils {
         return value == null || value.isEmpty();
     }
 
-    public static void close(Closeable... closeables) throws IOException{
-        if (isEmpty(closeables))
-            return;
-
-        Exception first = null;
-        for (Closeable closeable : closeables) {
-            if (closeable == null)
-                continue;
-
-            try {
-                closeable.close();
-            } catch (Exception e) {
-                first = (first == null ? e : first);
-            }
-        }
-
-        if (first != null)
-            throw (first instanceof IOException ? (IOException)first : new IOException(first));
-
-    }
-
+    @SafeVarargs
     public static <T> Collection<T> firstNonEmpty(Collection<T>... collections) {
         for (Collection<T> collection : collections)
             if (!isEmpty(collection))
@@ -73,7 +52,7 @@ public class CommonUtils {
         byte[] buffer = new byte[1024 * 4];
         int len;
 
-        while ((len = input.read(buffer)) > 0 ) {
+        while ((len = input.read(buffer)) > 0) {
             output.write(buffer, 0, len);
         }
     }

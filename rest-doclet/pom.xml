@@ -26,6 +26,7 @@ limitations under the License.
   <name>Rest Doclet</name>
   <description>A Javadoc Doclet that generates documentation on REST annotations in a project.</description>
   <dependencies>
+    <!-- Java doc generation -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>

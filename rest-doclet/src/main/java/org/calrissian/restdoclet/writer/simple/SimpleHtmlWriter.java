@@ -16,6 +16,7 @@
 package org.calrissian.restdoclet.writer.simple;
 
 import org.calrissian.restdoclet.Configuration;
+import org.calrissian.restdoclet.collector.Collector;
 import org.calrissian.restdoclet.model.ClassDescriptor;
 import org.calrissian.restdoclet.model.Endpoint;
 import org.calrissian.restdoclet.model.PathVar;
@@ -27,12 +28,17 @@ import java.util.Collection;
 import static org.calrissian.restdoclet.util.CommonUtils.*;
 
 public class SimpleHtmlWriter implements org.calrissian.restdoclet.writer.Writer {
-    public static final String OUTPUT_OPTION_NAME = "legacy";
-    private static final String DEFAULT_STYLESHEET = "default-stylesheet.css";
+    public static final String OUTPUT_OPTION_NAME   = "legacy";
+    private static final String DEFAULT_STYLESHEET  = "default-stylesheet.css";
+
 
     @Override
-    public void write(Collection<ClassDescriptor> classDescriptors, Configuration config) throws IOException {
+    public void write(Collector collector, Configuration config) throws IOException {
+        write(collector.getDescriptors(), config);
+    }
 
+
+    private void write(Collection<ClassDescriptor> classDescriptors, Configuration config) throws IOException {
         if (config.isdefaultStyleSheet())
             generateStyleSheet(config);
 
@@ -40,35 +46,23 @@ public class SimpleHtmlWriter implements org.calrissian.restdoclet.writer.Writer
     }
 
     private static void generateStyleSheet(Configuration config) throws IOException {
-        InputStream in = null;
-        OutputStream out = null;
-        try {
-
-            in = Thread.currentThread().getContextClassLoader().getResourceAsStream(DEFAULT_STYLESHEET);
-            out = new FileOutputStream(new File(config.getStyleSheet()));
-
-            copy(in, out);
-
-        } finally {
-            close(in, out);
+        try(InputStream inp = Thread.currentThread().getContextClassLoader().getResourceAsStream(DEFAULT_STYLESHEET);
+            OutputStream out = new FileOutputStream(new File(config.getStyleSheet()))) {
+            copy(inp, out);
         }
     }
 
     private static void writeHtml(Collection<ClassDescriptor> classDescriptors, Configuration config) throws IOException {
+        try (PrintWriter out = new PrintWriter(new File(".", "index.html"))) {
 
-        PrintWriter out = null;
-
-        try {
-            out = new PrintWriter(new File(".", "index.html"));
-
-            out.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\" ?>");
+            out.println("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>");
             out.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"");
             out.println("    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
 
             out.println("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
 
             out.println("<head>");
-            out.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\" />");
+            out.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />");
             out.println("<title>"+ config.getDocumentTitle() +"</title>");
             out.println("<link rel='stylesheet' type='text/css' href=' " + config.getStyleSheet() + "'/>");
             out.println("</head>");
@@ -132,8 +126,7 @@ public class SimpleHtmlWriter implements org.calrissian.restdoclet.writer.Writer
                         out.println("</table>");
                     }
 
-                    if (endpoint.getRequestBody() != null &&
-                            !isEmpty(endpoint.getRequestBody().getDescription())) {
+                    if (endpoint.getRequestBody() != null && !isEmpty(endpoint.getRequestBody().getDescription())) {
                         out.println("<div class=\"info_title\">Request Body</div>");
                         out.println("<table width=\"100%\" class=\"list\">");
                         out.println("<tr>");
@@ -181,12 +174,6 @@ public class SimpleHtmlWriter implements org.calrissian.restdoclet.writer.Writer
             out.println("</div>");
             out.println("</body>");
             out.println("</html>");
-
-        } finally {
-            close(out);
         }
     }
-
-
-
 }

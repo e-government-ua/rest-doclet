@@ -19,18 +19,11 @@ package org.calrissian.restdoclet;
 import com.sun.javadoc.Doclet;
 import com.sun.javadoc.LanguageVersion;
 import com.sun.javadoc.RootDoc;
-import org.calrissian.restdoclet.collector.Collector;
-import org.calrissian.restdoclet.collector.jaxrs.JaxRSCollector;
 import org.calrissian.restdoclet.collector.spring.SpringCollector;
-import org.calrissian.restdoclet.model.ClassDescriptor;
 import org.calrissian.restdoclet.writer.Writer;
 import org.calrissian.restdoclet.writer.simple.SimpleHtmlWriter;
-import org.calrissian.restdoclet.writer.swagger.SwaggerWriter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 
 import static org.calrissian.restdoclet.Configuration.getOptionLength;
 
@@ -45,8 +38,9 @@ public class RestDoclet extends Doclet {
     public static boolean start(RootDoc root) {
         try {
             Writer writer = new SimpleHtmlWriter();
-            writer.write(new SpringCollector().getDescriptors(root), new Configuration(root.options()));
+            writer.write(new SpringCollector(root), new Configuration(root));
             return true;
+
         } catch (IOException e) {
             e.printStackTrace();
             return false;

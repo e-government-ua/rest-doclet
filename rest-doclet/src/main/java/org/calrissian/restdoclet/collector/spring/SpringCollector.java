@@ -19,6 +19,7 @@ package org.calrissian.restdoclet.collector.spring;
 import com.sun.javadoc.*;
 import org.calrissian.restdoclet.collector.AbstractCollector;
 import org.calrissian.restdoclet.collector.EndpointMapping;
+import org.calrissian.restdoclet.model.ClassDescriptor;
 import org.calrissian.restdoclet.model.PathVar;
 import org.calrissian.restdoclet.model.QueryParam;
 import org.calrissian.restdoclet.model.RequestBody;
@@ -28,6 +29,7 @@ import java.util.*;
 import static java.lang.Boolean.TRUE;
 import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 import static org.calrissian.restdoclet.util.AnnotationUtils.getAnnotationName;
 import static org.calrissian.restdoclet.util.AnnotationUtils.getElementValue;
 import static org.calrissian.restdoclet.util.CommonUtils.firstNonEmpty;
@@ -36,14 +38,21 @@ import static org.calrissian.restdoclet.util.TagUtils.*;
 
 public class SpringCollector extends AbstractCollector {
 
-    protected static final List<String> CONTROLLER_ANNOTATION = Collections.unmodifiableList(Arrays.asList(
-        "org.springframework.stereotype.Controller",
-        "org.springframework.web.bind.annotation.RestController"));
+    protected static final List<String> CONTROLLER_ANNOTATION = unmodifiableList(asList(
+            "org.springframework.stereotype.Controller",
+            "org.springframework.web.bind.annotation.RestController"));
 
-    protected static final String MAPPING_ANNOTATION = "org.springframework.web.bind.annotation.RequestMapping";
-    protected static final String PATHVAR_ANNOTATION = "org.springframework.web.bind.annotation.PathVariable";
-    protected static final String PARAM_ANNOTATION = "org.springframework.web.bind.annotation.RequestParam";
-    protected static final String REQUESTBODY_ANNOTATION = "org.springframework.web.bind.annotation.RequestBody";
+    protected static final String MAPPING_ANNOTATION        = "org.springframework.web.bind.annotation.RequestMapping";
+    protected static final String PATHVAR_ANNOTATION        = "org.springframework.web.bind.annotation.PathVariable";
+    protected static final String PARAM_ANNOTATION          = "org.springframework.web.bind.annotation.RequestParam";
+    protected static final String REQUESTBODY_ANNOTATION    = "org.springframework.web.bind.annotation.RequestBody";
+
+    private RootDoc root;
+
+    public SpringCollector(RootDoc root) {
+        this.root = root;
+    }
+
 
     @Override
     protected boolean shouldIgnoreClass(ClassDoc classDoc) {
@@ -75,15 +84,15 @@ public class SpringCollector extends AbstractCollector {
             if (MAPPING_ANNOTATION.equals(getAnnotationName(annotation))) {
 
                 //Get http methods from annotation
-                Collection<String> httpMethods = new LinkedHashSet<String>();
+                Collection<String> httpMethods = new LinkedHashSet<>();
                 for (String value : getElementValue(annotation, "method"))
                     httpMethods.add(value.substring(value.lastIndexOf(".") + 1));
 
                 return new EndpointMapping(
-                        new LinkedHashSet<String>(getElementValue(annotation, "value")),
+                        new LinkedHashSet<>(getElementValue(annotation, "value")),
                         httpMethods,
-                        new LinkedHashSet<String>(getElementValue(annotation, "consumes")),
-                        new LinkedHashSet<String>(getElementValue(annotation, "produces"))
+                        new LinkedHashSet<>(getElementValue(annotation, "consumes")),
+                        new LinkedHashSet<>(getElementValue(annotation, "produces"))
                 );
             }
         }
@@ -99,7 +108,7 @@ public class SpringCollector extends AbstractCollector {
 
     @Override
     protected Collection<PathVar> generatePathVars(MethodDoc methodDoc) {
-        Collection<PathVar> retVal = new ArrayList<PathVar>();
+        Collection<PathVar> retVal = new ArrayList<>();
 
         Tag[] tags = methodDoc.tags(PATHVAR_TAG);
         ParamTag[] paramTags = methodDoc.paramTags();
@@ -129,7 +138,7 @@ public class SpringCollector extends AbstractCollector {
 
     @Override
     protected Collection<QueryParam> generateQueryParams(MethodDoc methodDoc) {
-        Collection<QueryParam> retVal = new ArrayList<QueryParam> ();
+        Collection<QueryParam> retVal = new ArrayList<> ();
 
         Tag[] tags = methodDoc.tags(QUERYPARAM_TAG);
         ParamTag[] paramTags = methodDoc.paramTags();
@@ -197,5 +206,10 @@ public class SpringCollector extends AbstractCollector {
     protected Collection<String> resolveHttpMethods(EndpointMapping classMapping, EndpointMapping methodMapping) {
         //If there are no http methods defined simply use GET
         return firstNonEmpty(super.resolveHttpMethods(classMapping, methodMapping), asList("GET"));
+    }
+
+    @Override
+    public Collection<ClassDescriptor> getDescriptors() {
+        return getDescriptors(root);
     }
 }

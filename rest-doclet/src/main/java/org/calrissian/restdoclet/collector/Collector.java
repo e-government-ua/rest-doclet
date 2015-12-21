@@ -21,8 +21,6 @@ import org.calrissian.restdoclet.model.ClassDescriptor;
 import java.util.Collection;
 
 public interface Collector {
-
     Collection<ClassDescriptor> getDescriptors(RootDoc rootDoc);
-
-
+    Collection<ClassDescriptor> getDescriptors();
 }
