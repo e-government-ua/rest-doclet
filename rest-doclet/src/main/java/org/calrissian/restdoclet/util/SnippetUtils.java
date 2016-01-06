@@ -2,6 +2,7 @@ package org.calrissian.restdoclet.util;
 
 import org.calrissian.restdoclet.model.Endpoint;
 import org.calrissian.restdoclet.model.method.description.Snippet;
+import org.calrissian.restdoclet.model.method.description.SnippetJSON;
 import org.calrissian.restdoclet.model.method.description.SnippetText;
 
 import java.util.ArrayList;
@@ -35,9 +36,31 @@ public final class SnippetUtils {
     }
 
     private static void parse(String methodDescription, List<Snippet> comment) {
-        if (containsIgnoreCase(methodDescription, "````json")) {
-
-        } else
-            comment.add(new SnippetText(methodDescription));
+        while(!methodDescription.isEmpty()) {
+            if (methodDescription.startsWith("````json")) {
+                int startIndex = 8;
+                int endIndex = 8;
+                for (int i = startIndex; i < methodDescription.length(); i++) {
+                    if(methodDescription.charAt(i) == '`') {
+                        endIndex = i;
+                        break;
+                    }
+                }
+                comment.add(new SnippetJSON(methodDescription.substring(startIndex, endIndex)));
+                methodDescription = methodDescription.replace(methodDescription.substring(0, endIndex + 1), "");
+            } else {
+                // text
+                int startIndex = 0;
+                int endIndex = 0;
+                for (int i = startIndex; i < methodDescription.length(); i++) {
+                    if (methodDescription.charAt(i) == '`') {
+                        endIndex = i;
+                        break;
+                    }
+                }
+                comment.add(new SnippetText(methodDescription.substring(startIndex, endIndex)));
+                methodDescription = methodDescription.replace(methodDescription.substring(0, endIndex), "");
+            }
+        }
     }
 }
