@@ -10,8 +10,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
+import static org.apache.commons.lang.StringUtils.indexOf;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 /**
  * @author dgroup
@@ -35,31 +36,19 @@ public final class SnippetUtils {
         return comment;
     }
 
-    private static void parse(String methodDescription, List<Snippet> comment) {
-        while(!methodDescription.isEmpty()) {
-            if (methodDescription.startsWith("````json")) {
-                int startIndex = 8;
-                int endIndex = 8;
-                for (int i = startIndex; i < methodDescription.length(); i++) {
-                    if(methodDescription.charAt(i) == '`') {
-                        endIndex = i;
-                        break;
-                    }
-                }
-                comment.add(new SnippetJSON(methodDescription.substring(startIndex, endIndex)));
-                methodDescription = methodDescription.replace(methodDescription.substring(0, endIndex + 1), "");
+    private static void parse(String description, List<Snippet> comment) {
+        while(isNotEmpty(description)) {
+            // Handle json snippet
+            if (description.startsWith("````json")) {
+                int start = "````json".length();
+                int end   = indexOf(description, '`', start);
+                comment.add(new SnippetJSON( description.substring(start, end) ));
+                description = description.substring(end + 1);
             } else {
-                // text
-                int startIndex = 0;
-                int endIndex = 0;
-                for (int i = startIndex; i < methodDescription.length(); i++) {
-                    if (methodDescription.charAt(i) == '`') {
-                        endIndex = i;
-                        break;
-                    }
-                }
-                comment.add(new SnippetText(methodDescription.substring(startIndex, endIndex)));
-                methodDescription = methodDescription.replace(methodDescription.substring(0, endIndex), "");
+                // Handle text snippet
+                int end = indexOf(description, '`');
+                comment.add(new SnippetText( description.substring(0, end) ));
+                description = description.substring(end);
             }
         }
     }

@@ -26,8 +26,7 @@ import org.calrissian.restdoclet.model.RequestBody;
 
 import java.util.*;
 
-import static java.lang.Boolean.TRUE;
-import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static org.calrissian.restdoclet.util.AnnotationUtils.getAnnotationName;

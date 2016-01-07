@@ -191,6 +191,6 @@ public class SimpleHtmlWriter implements org.calrissian.restdoclet.writer.Writer
     }
 
     private static String jsonToHtml(Snippet snippet) {
-        return null;
+        return "<pre>"+snippet.content()+"</pre>";
     }
 }
