@@ -21,14 +21,11 @@ import org.calrissian.restdoclet.model.ClassDescriptor;
 import org.calrissian.restdoclet.model.Endpoint;
 import org.calrissian.restdoclet.model.PathVar;
 import org.calrissian.restdoclet.model.QueryParam;
-import org.calrissian.restdoclet.model.method.description.Snippet;
-import org.calrissian.restdoclet.model.method.description.SnippetJSON;
 
 import java.io.*;
 import java.util.Collection;
 
 import static org.calrissian.restdoclet.util.CommonUtils.*;
-import static org.calrissian.restdoclet.util.SnippetUtils.description;
 
 public class SimpleHtmlWriter implements org.calrissian.restdoclet.writer.Writer {
     public static final String OUTPUT_OPTION_NAME   = "legacy";
@@ -162,10 +159,7 @@ public class SimpleHtmlWriter implements org.calrissian.restdoclet.writer.Writer
                     }
 
                     out.println("<div class=\"info_title\">Description</div>");
-                    out.println("<div class=\"info_text\">");
-                    for(Snippet snippet : description(endpoint))
-                        out.println(html(snippet));
-                    out.println("</div>");
+                    out.println("<div class=\"info_text\">" + endpoint.getDescription() + "</div>");
                     out.println("</td>");
                     out.println("</tr>");
                     out.println("</table>");
@@ -181,16 +175,5 @@ public class SimpleHtmlWriter implements org.calrissian.restdoclet.writer.Writer
             out.println("</body>");
             out.println("</html>");
         }
-    }
-
-    private static String html(Snippet snippet) {
-        if (snippet instanceof SnippetJSON)
-            return jsonToHtml(snippet);
-        else
-            return snippet.content();
-    }
-
-    private static String jsonToHtml(Snippet snippet) {
-        return null;
     }
 }
