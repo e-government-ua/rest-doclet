@@ -42,7 +42,9 @@ public final class SnippetUtils {
             if (description.startsWith("````json")) {
                 int start = "````json".length();
                 int end   = indexOf(description, '`', start);
-                comment.add(new SnippetJSON( description.substring(start, end) ));
+                SyntaxHighlighting synHighlighting = new SyntaxHighlighting(description.substring(start, end));
+                String jsonResult = synHighlighting.makeSyntaxHighlightingJSON();
+                comment.add(new SnippetJSON( jsonResult ));
                 description = description.substring(end + 1);
             } else {
                 // Handle text snippet
