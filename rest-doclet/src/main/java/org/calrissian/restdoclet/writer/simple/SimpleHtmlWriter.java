@@ -164,7 +164,7 @@ public class SimpleHtmlWriter implements org.calrissian.restdoclet.writer.Writer
                     out.println("<div class=\"info_title\">Description</div>");
                     out.println("<div class=\"info_text\">");
                     for(Snippet snippet : description(endpoint))
-                        out.println(html(snippet));
+                        out.println( snippet.content() );
                     out.println("</div>");
                     out.println("</td>");
                     out.println("</tr>");
@@ -181,16 +181,5 @@ public class SimpleHtmlWriter implements org.calrissian.restdoclet.writer.Writer
             out.println("</body>");
             out.println("</html>");
         }
-    }
-
-    private static String html(Snippet snippet) {
-        if (snippet instanceof SnippetJSON)
-            return jsonToHtml(snippet);
-        else
-            return snippet.content();
-    }
-
-    private static String jsonToHtml(Snippet snippet) {
-        return "<pre>"+snippet.content()+"</pre>";
     }
 }

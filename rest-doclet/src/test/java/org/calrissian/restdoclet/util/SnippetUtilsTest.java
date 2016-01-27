@@ -1,3 +1,5 @@
+package org.calrissian.restdoclet.util;
+
 import org.calrissian.restdoclet.model.method.description.Snippet;
 import org.junit.Test;
 

@@ -4,6 +4,7 @@ import org.calrissian.restdoclet.model.Endpoint;
 import org.calrissian.restdoclet.model.method.description.Snippet;
 import org.calrissian.restdoclet.model.method.description.SnippetJSON;
 import org.calrissian.restdoclet.model.method.description.SnippetText;
+import org.calrissian.restdoclet.model.method.description.SyntaxHighlighting;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +20,8 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
  * @since 31.12.2015
  */
 public final class SnippetUtils {
+
+    private static final String HEADER = "````json";
 
     private SnippetUtils(){
         // no action required
@@ -39,13 +42,11 @@ public final class SnippetUtils {
     private static void parse(String description, List<Snippet> comment) {
         while(isNotEmpty(description)) {
             // Handle json snippet
-            if (description.startsWith("````json")) {
-                int start = "````json".length();
-                int end   = indexOf(description, '`', start);
-                SyntaxHighlighting synHighlighting = new SyntaxHighlighting(description.substring(start, end));
-                String jsonResult = synHighlighting.makeSyntaxHighlightingJSON();
-                comment.add(new SnippetJSON( jsonResult ));
-                description = description.substring(end + 1);
+            if (description.startsWith(HEADER)) {
+                int end = indexOf(description, '`', HEADER.length());
+                SyntaxHighlighting html = new SyntaxHighlighting(description, HEADER.length(), end);
+                comment.add(new SnippetJSON( html.highlightJSON() ));
+                description = description.substring( end+1 );
             } else {
                 // Handle text snippet
                 int end = indexOf(description, '`');
