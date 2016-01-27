@@ -2,6 +2,8 @@ package org.calrissian.restdoclet.model.method.description;
 
 import static org.apache.commons.lang.StringUtils.indexOf;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang.StringUtils.removeStart;
+import static org.apache.commons.lang.StringUtils.substring;
 import static org.apache.commons.lang.Validate.isTrue;
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -56,16 +58,12 @@ public class SyntaxHighlighting {
     }
 
     private String plainText() {
-        int end = indexOf(jsonText, "\"", 0);
-        if (end == -1) {
+        int endIndex = indexOf(jsonText, "\"", 0);
+        if (endIndex == -1) {
             // end of JSON code
-            String temp = jsonText.substring(0, jsonText.length());
-            jsonText = jsonText.substring(temp.length());
-            return temp;
+            return selection(jsonText.length());
         } else {
-            String temp = jsonText.substring(0, end);
-            jsonText = jsonText.substring(temp.length());
-            return temp;
+            return selection(endIndex);
         }
     }
 
@@ -74,15 +72,13 @@ public class SyntaxHighlighting {
         while (Character.isSpaceChar(jsonText.charAt(endIndex))) {
             ++endIndex;
         }
-        String temp = jsonText.substring(0, endIndex);
-        jsonText = jsonText.substring(temp.length());
-        return temp;
+        return selection(endIndex);
     }
 
     private String highlightString() {
         int endIndex = indexOf(jsonText, "\"", 1);
-        String temp = jsonText.substring(0, endIndex + 1);
-        jsonText = jsonText.replace(temp, "");
+        String temp = substring(jsonText, 0, endIndex + 1);
+        jsonText = removeStart(jsonText, temp);
         return (HTML_TEXT + temp + end);
     }
 
@@ -91,18 +87,20 @@ public class SyntaxHighlighting {
         while (Character.isDigit(jsonText.charAt(endIndex))) {
             ++endIndex;
         }
-        String temp = jsonText.substring(0, endIndex);
-        jsonText = jsonText.substring(temp.length());
-        return (HTML_NUMBER + temp + end);
+        return (HTML_NUMBER + selection(endIndex) + end);
     }
 
     private String highlightKeywords() {
-        int end = 1;
-        while (Character.isLetter(jsonText.charAt(end))) {
-            ++end;
+        int endIndex = 1;
+        while (Character.isLetter(jsonText.charAt(endIndex))) {
+            ++endIndex;
         }
-        String temp = jsonText.substring(0, end);
-        jsonText = jsonText.substring(temp.length());
-        return HTML_KEYWORD + temp + SyntaxHighlighting.end;
+        return (HTML_KEYWORD + selection(endIndex) + end);
+    }
+
+    private String selection(int endIndex) {
+        String temp = substring(jsonText, 0, endIndex);
+        jsonText = removeStart(jsonText, temp);
+        return temp;
     }
 }
