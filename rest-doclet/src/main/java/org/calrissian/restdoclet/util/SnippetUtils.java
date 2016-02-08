@@ -11,6 +11,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static org.apache.commons.lang.StringUtils.indexOf;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
@@ -22,6 +25,8 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 public final class SnippetUtils {
 
     private static final String HEADER = "````json";
+
+    //private static Logger logger = LoggerFactory.getLogger(SnippetUtils.class);
 
     private SnippetUtils(){
         // no action required
@@ -45,13 +50,18 @@ public final class SnippetUtils {
             if (description.startsWith(HEADER)) {
                 int end = indexOf(description, '`', HEADER.length());
                 SyntaxHighlighting html = new SyntaxHighlighting(description, HEADER.length(), end);
-                comment.add(new SnippetJSON( html.highlightJSON() ));
+                comment.add(new SnippetJSON( html.highlightJSON()));
                 description = description.substring( end+1 );
             } else {
                 // Handle text snippet
                 int end = indexOf(description, '`');
-                comment.add(new SnippetText( description.substring(0, end) ));
-                description = description.substring(end);
+                if (end == -1) {
+                    comment.add(new SnippetText( description.substring(0, description.length()) ));
+                    description = description.substring(description.length());
+                } else {
+                    comment.add(new SnippetText(description.substring(0, end)));
+                    description = description.substring(end);
+                }
             }
         }
     }

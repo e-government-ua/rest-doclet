@@ -22,7 +22,6 @@ import org.calrissian.restdoclet.model.Endpoint;
 import org.calrissian.restdoclet.model.PathVar;
 import org.calrissian.restdoclet.model.QueryParam;
 import org.calrissian.restdoclet.model.method.description.Snippet;
-import org.calrissian.restdoclet.model.method.description.SnippetJSON;
 
 import java.io.*;
 import java.util.Collection;
